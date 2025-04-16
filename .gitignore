@@ -5,3 +5,4 @@ data/*
 *.DS_Store
 *.code-workspace
 *.ipynb
+.*egg-info

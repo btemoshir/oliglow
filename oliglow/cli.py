@@ -81,7 +81,7 @@ def main():
     # Call the deisotope function with the parameters
     df = (
         deisotope.deisotope_all_ms2_scans(
-            raw_file_path=settings.rawfile,
+            raw_file_path=str(settings.rawfile),
             deisotoping_parameters=params_dict,
             aggregate_masses=None,
             min_num_peaks_per_ms2_scan=settings.min_num_peaks_per_ms2_scan,

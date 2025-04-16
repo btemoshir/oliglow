@@ -23,6 +23,7 @@ dependencies = [
     "polars>=1.27.1",
     "numpy>=2.2.4",
     "ms_deisotope>=0.0.56",
+    "typed-argument-parser>=1.10.1"
 ]
 
 [project.scripts]
