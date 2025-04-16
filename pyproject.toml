@@ -18,5 +18,12 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 
+dependencies = [
+    "pythonnet>=3.0.5",
+    "polars>=1.27.1",
+    "numpy>=2.2.4",
+    "ms_deisotope>=0.0.56",
+]
+
 [project.urls]
 Homepage = "https://github.com/btemoshir/oliglow"

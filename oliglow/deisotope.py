@@ -1,19 +1,18 @@
 import ms_deisotope as ms_ditp
 import polars as pl
 import importlib
-import utils
-import averageine
+from oliglow import utils
+from oliglow import averageine
 
 # get_mono from clr_loader defines where to get mono from
-from clr_loader import get_mono
+# from clr_loader import get_mono
 
 # Use the mono from the mono installation in the homebrew directory and not the default (the default is only for the intel acrchitecture)
-rt = get_mono(libmono="/opt/homebrew/Cellar/mono/6.12.0.206/lib/libmono-2.0.1.dylib")
+# rt = get_mono(libmono="/opt/homebrew/Cellar/mono/6.12.0.206/lib/libmono-2.0.1.dylib")
 
 # import clr
-import pythonnet
-
-pythonnet.get_runtime_info()
+# import pythonnet
+# pythonnet.get_runtime_info()
 
 MASS_PROTON = 1.00727646677  # Replace this by the charge of the mass carrier if using other than protonated ions!
 
