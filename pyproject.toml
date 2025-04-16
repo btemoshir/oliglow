@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "oliglow"
+version = "0.1.0"
+description = "Deisotoping and deconvolution tools for nucleic acid sequences"
+authors = [
+    { name = "Moshir Harsh", email = "btemoshir@gmail.com" }
+]
+readme = "README.md"
+license = {text = "GPL-3.0-only"}
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/btemoshir/oliglow"
