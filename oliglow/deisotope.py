@@ -7,7 +7,8 @@ from oliglow import averageine
 # get_mono from clr_loader defines where to get mono from
 # from clr_loader import get_mono
 
-# Use the mono from the mono installation in the homebrew directory and not the default (the default is only for the intel acrchitecture)
+# Use the mono from the mono installation in the homebrew directory and not the default
+# (the default is only for the intel acrchitecture)
 # rt = get_mono(libmono="/opt/homebrew/Cellar/mono/6.12.0.206/lib/libmono-2.0.1.dylib")
 
 # import clr
@@ -60,7 +61,9 @@ def get_additional_bunch_info(bunch):
     )
 
 
-def re_deisotope_get_additional_bunch_info(bunch,precursor = None,re_deisotope_success = False):
+def re_deisotope_get_additional_bunch_info(
+    bunch, precursor=None, re_deisotope_success=False
+):
     # Get the relevant precursor information and MS2 scan number from the bunch object
 
     if precursor is None:
@@ -72,7 +75,7 @@ def re_deisotope_get_additional_bunch_info(bunch,precursor = None,re_deisotope_s
 
     ms1_precursor_scan_number = int(
         bunch.source.find_previous_ms1(bunch.index).scan_id.split("scan=")[-1]
-        #bunch.precursor_information.precursor_scan_id.split("scan=")[-1]
+        # bunch.precursor_information.precursor_scan_id.split("scan=")[-1]
     )  # TODO: This does not match what freestyle does, check this!
 
     # if re_deisotope_success:
@@ -80,7 +83,9 @@ def re_deisotope_get_additional_bunch_info(bunch,precursor = None,re_deisotope_s
     ms1_intensity = precursor.extracted_intensity
     precursor_neutral_mass = precursor.extracted_neutral_mass
 
-    if type(precursor.extracted_charge) == type(1) or type(precursor.extracted_charge) == type(-1):
+    if type(precursor.extracted_charge) == type(1) or type(
+        precursor.extracted_charge
+    ) == type(-1):
         precursor_charge = precursor.extracted_charge
         # precursor_neutral_mass = precursor.extracted_neutral_mass
     else:
@@ -92,7 +97,7 @@ def re_deisotope_get_additional_bunch_info(bunch,precursor = None,re_deisotope_s
     # else:
     #     precursor_mz = precursor.mz
     #     ms1_intensity = precursor.intensity
-        
+
     #     if type(precursor.charge) == type(1) or type(precursor.charge) == type(-1):
     #         precursor_charge = precursor.charge
     #         precursor_neutral_mass = precursor.neutral_mass
@@ -130,7 +135,7 @@ def deconvolute_ms2_bunch(
     re_deistope_precursor=True,
     trust_precursor_scan_number=False,
     re_deisotoping_parameters=dict(),
-    return_data_frame=False
+    return_data_frame=False,
 ):
     # Deisotope a specific given bunch object!
 
@@ -189,7 +194,7 @@ def deconvolute_ms2_bunch(
     if "error_tol" in parameters:
         error_tol = parameters["error_tol"]
     else:
-        #error_tol = 2e-5  # Also the default value! PPM error tolerance to use to match experimental to theoretical peaks, defalut = 2e-5
+        # error_tol = 2e-5  # Also the default value! PPM error tolerance to use to match experimental to theoretical peaks, defalut = 2e-5
         error_tol = 2e-6
 
     if "scale_method" in parameters:
@@ -209,8 +214,11 @@ def deconvolute_ms2_bunch(
                 bunch.precursor_information.charge * bunch.polarity,
             )
         else:
-            charge_range = (bunch.polarity, bunch.polarity * 30) #TODO: Estimate this from the sequence length
-            #IMP: This number should be large enough to cover the charge states of the precursors!
+            charge_range = (
+                bunch.polarity,
+                bunch.polarity * 30,
+            )  # TODO: Estimate this from the sequence length
+            # IMP: This number should be large enough to cover the charge states of the precursors!
 
     if "minimum_intensity" in parameters:
         minimum_intensity = parameters["minimum_intensity"]
@@ -223,19 +231,23 @@ def deconvolute_ms2_bunch(
 
     # Get the additional information from the bunch object
     if re_deistope_precursor:
-        
         precursor_info = bunch.precursor_information
 
         if not trust_precursor_scan_number:
-            #Correct the precursor scan number to the correct one! This is sometimes incorrectly loaded from the raw file by ThermoRawLoader
-            precursor_scan_number = bunch.source.find_previous_ms1(bunch.index)._data.scan_number
-            precursor_scan_id = bunch.source.get_scan_by_index(precursor_scan_number).id        
-            precursor_info.precursor_scan_id  = precursor_scan_id
-            #print(precursor_info)
+            # Correct the precursor scan number to the correct one! This is sometimes incorrectly loaded from the raw file by ThermoRawLoader
+            precursor_scan_number = bunch.source.find_previous_ms1(
+                bunch.index
+            )._data.scan_number
+            precursor_scan_id = bunch.source.get_scan_by_index(precursor_scan_number).id
+            precursor_info.precursor_scan_id = precursor_scan_id
+            # print(precursor_info)
 
-        _,re_deisotope_success, = bunch.precursor_information.find_monoisotopic_peak(
+        (
+            _,
+            re_deisotope_success,
+        ) = bunch.precursor_information.find_monoisotopic_peak(
             trust_charge_state=False,
-            #precursor_scan=bunch.source.find_previous_ms1(bunch.index),
+            # precursor_scan=bunch.source.find_previous_ms1(bunch.index),
             averageine=avgine,
             scorer=scorer,
             max_missed_peaks=max_missed_peaks,
@@ -243,38 +255,43 @@ def deconvolute_ms2_bunch(
             truncate_after=0.95,
             scale=scale,
             error_tolerance=error_tol,
-            #error_tolerance=2e-6,
-            minimum_intensity=0.,
+            # error_tolerance=2e-6,
+            minimum_intensity=0.0,
             scale_method=scale_method,
         )
 
-        #It can happen that the `find_monoisotopic_peak` is not complete/good enough
-        #In that case, we also need a function that deisotopes the MS1 precurosor scan explicitly!
-        #This is done by the following function: 
-        # 
+        # It can happen that the `find_monoisotopic_peak` is not complete/good enough
+        # In that case, we also need a function that deisotopes the MS1 precurosor scan explicitly!
+        # This is done by the following function:
+        #
         # #TODO: Implement this function!
         def desitope_ms1_precusorsor():
             precursor_scan_id = bunch.precursor_information.id
             ms1_peakset = bunch.source.get_scan_by_id(precursor_scan_id).peak_set
-            
-            #Select the window of the precursor scan!
-            ms1_range = ms1_peakset.between(bunch.isolation_window.lower_bound,bunch.isolation_window.higher_bound)
-            
-            ms1_ditp = ms_ditp.deconvolute_peaks(peaklist=ms1_range,
-                                    averageine=avgine,
-                                    scorer=scorer,
-                                    max_missed_peaks=max_missed_peaks,
-                                    charge_range=charge_range,
-                                    truncate_after=truncate_after,
-                                    scale=scale,
-                                    error_tolerance=error_tol,
-                                    minimum_intensity=minimum_intensity,
-                                    scale_method=scale_method,
-                                    )
-            return ms1_ditp[0]
-            #Extract the "additional information" from this MS1 scan further!
 
-        add_info = re_deisotope_get_additional_bunch_info(bunch,bunch.precursor_information,re_deisotope_success)
+            # Select the window of the precursor scan!
+            ms1_range = ms1_peakset.between(
+                bunch.isolation_window.lower_bound, bunch.isolation_window.higher_bound
+            )
+
+            ms1_ditp = ms_ditp.deconvolute_peaks(
+                peaklist=ms1_range,
+                averageine=avgine,
+                scorer=scorer,
+                max_missed_peaks=max_missed_peaks,
+                charge_range=charge_range,
+                truncate_after=truncate_after,
+                scale=scale,
+                error_tolerance=error_tol,
+                minimum_intensity=minimum_intensity,
+                scale_method=scale_method,
+            )
+            return ms1_ditp[0]
+            # Extract the "additional information" from this MS1 scan further!
+
+        add_info = re_deisotope_get_additional_bunch_info(
+            bunch, bunch.precursor_information, re_deisotope_success
+        )
     else:
         add_info = get_additional_bunch_info(bunch)
 
@@ -292,8 +309,10 @@ def deconvolute_ms2_bunch(
     )
 
     if return_data_frame:
-        df = utils.convert_peaks_dataFrame(deconvoluted_peaks.peak_set,deisotoped=True)
-        add_info_df = pl.concat([add_info] * len(deconvoluted_peaks.peak_set), how="vertical")
+        df = utils.convert_peaks_dataFrame(deconvoluted_peaks.peak_set, deisotoped=True)
+        add_info_df = pl.concat(
+            [add_info] * len(deconvoluted_peaks.peak_set), how="vertical"
+        )
         df = pl.concat([df, add_info_df], how="horizontal")
         return df
     else:
@@ -356,7 +375,10 @@ def deisotope_all_ms2_scans(
                     add_info = pl.concat([add_info] * len(t2), how="vertical")
                     decon_list.append(
                         pl.concat(
-                            [utils.convert_peaks_dataFrame(t2,deisotoped=True), add_info],
+                            [
+                                utils.convert_peaks_dataFrame(t2, deisotoped=True),
+                                add_info,
+                            ],
                             how="horizontal",
                         )
                     )
@@ -369,7 +391,12 @@ def deisotope_all_ms2_scans(
                     add_info = pl.concat([add_info] * len(t.peak_set), how="vertical")
                     decon_list.append(
                         pl.concat(
-                            [utils.convert_peaks_dataFrame(t.peak_set,deisotoped=True), add_info],
+                            [
+                                utils.convert_peaks_dataFrame(
+                                    t.peak_set, deisotoped=True
+                                ),
+                                add_info,
+                            ],
                             how="horizontal",
                         )
                     )
