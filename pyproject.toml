@@ -25,5 +25,8 @@ dependencies = [
     "ms_deisotope>=0.0.56",
 ]
 
+[project.scripts]
+oliglow = "oliglow.cli:main"
+
 [project.urls]
 Homepage = "https://github.com/btemoshir/oliglow"
