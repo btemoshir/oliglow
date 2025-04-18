@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "oliglow"
 version = "0.1.0"
-description = "Deisotoping and deconvolution tools for nucleic acid sequences"
+description = "Deisotoping and deconvolution tools for tandem mass spectrometry (LCMS) of nucleic acid oligos"
 authors = [
     { name = "Moshir Harsh", email = "btemoshir@gmail.com" }
 ]
