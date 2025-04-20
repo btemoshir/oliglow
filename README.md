@@ -111,8 +111,6 @@ Options
 from oliglow import deisotope, averageine
 
 # Example usage with your data
-#TODO
-
 params_dict = {
     "avgine": averageine.averagine_rna_with_backbone,
     "min_score": 150.0,
