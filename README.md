@@ -7,7 +7,7 @@ A Python package for deisotoping and deconvoluting nucleic acid sequences.
 pip install oliglow -->
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Oliglow-%F0%9F%94%8D%20Clean%20Nucleic%20Data%20Tool-brightgreen?style=for-the-badge" alt="Oliglow Badge">
+  <img src="https://img.shields.io/badge/Oliglow-%F0%9F%94%8D%20Deisotope%20Nucleic%20Acid%20Oligos-brightgreen?style=for-the-badge" alt="Oliglow Badge">
 </p>
 
 <h1 align="center">🧬 Oliglow</h1>
@@ -24,9 +24,11 @@ pip install oliglow -->
 
 Whether you're cleaning mass spectrometry data, analysing complex oligo mixtures, or developing new bioinformatics tools — Oliglow helps you extract meaningful sequence signals with minimal fuss. 
 
-It is meant to extract the fragment masses (MS1) from tandem mass spectrometry and the oligo (MS1) mass corresponding to each fragment. This is first pre-processing step in using tandem mass spectrometry for oligo sequencing using `lionelmssq`.
+It is designed to extract fragment masses (MS1) from tandem mass spectrometry data and map them to the corresponding oligonucleotide (MS1) masses for each fragment. This process serves as a critical pre-processing step in utilizing tandem mass spectrometry for oligonucleotide sequencing. By leveraging the `lionelmssq` library, **Oliglow** ensures accurate and efficient extraction of these masses, enabling researchers to streamline their workflows and gain deeper insights into nucleic acid sequences. This functionality is particularly valuable for applications in bioinformatics, molecular biology, and analytical chemistry, where precise mass spectrometry data is essential for downstream analysis.
 
-This package uses [`ms_deisotope`](https://github.com/mobiusklein/ms_deisotope) at its backend but creates a table aggregating fragments from each raw file where its possible to backtrack each fragment to its origin peaks and the origin scan.
+This package leverages the powerful [`ms_deisotope`](https://github.com/mobiusklein/ms_deisotope) library as its backend for performing deisotoping and deconvolution tasks. However, **Oliglow** extends its functionality by generating a comprehensive table that aggregates fragments from each raw file. 
+
+The resulting table provides detailed insights, allowing users to trace each fragment back to its original peaks and the corresponding scan from which it was derived. This feature ensures transparency and reproducibility in the analysis, making it easier to validate results and integrate them into downstream workflows.
 
 ---
 
@@ -76,16 +78,16 @@ The `oliglow` CLI provides tools for deisotoping and deconvolution of tandem mas
 ```bash
 oliglow --rawfile /path/to/input.raw \
         --outfile /path/to/output.tsv \
-        --avgine RNA \
-        --min-score 50 \
-        --mass-error-tol 10 \
-        --truncate-after 1000 \
-        --scale 1.0 \
-        --max-missed-peaks 2 \
-        --error-tol 0.01 \
-        --scale-method intensity \
-        --minimum-intensity 100 \
-        --min-num-peaks-per-ms2-scan 5
+        --avgine "RNA_with_backbone" \
+        --min-score 150 \
+        --mass-error-tol 0.02 \
+        --truncate-after 0.8 \
+        --scale "sum" \
+        --max-missed-peaks 0 \
+        --error-tol 2e-5 \
+        --scale-method "sum" \
+        --minimum-intensity 0.0 \
+        --min-num-peaks-per-ms2-scan 0
 ```
 ```
 Options
@@ -94,22 +96,43 @@ Options
 --avgine: Averagine model to use (RNA, RNA_with_backbone, or RNA_with_thiophosphate_backbone).
 --min-score: Minimum score for deisotoping.
 --mass-error-tol: Mass error tolerance in ppm.
---truncate-after: Maximum number of peaks to consider.
+--truncate-after: How much of the deisoptoping envelope to consider. For MS2 scans, typical value should be 0.8.
 --scale: Scaling factor for intensities.
 --max-missed-peaks: Maximum number of missed peaks allowed.
---error-tol: Error tolerance for deisotoping.
---scale-method: Method for scaling intensities (intensity, etc.).
---minimum-intensity: Minimum intensity threshold for peaks.
---min-num-peaks-per-ms2-scan: Minimum number of peaks required per MS2 scan.
+--error-tol: Error tolerance for deisotoping (in ppm).
+--scale-method: Method for scaling intensities ("sum", "max",...).
+--minimum-intensity: Minimum intensity threshold for any peak to be considered.
+--min-num-peaks-per-ms2-scan: Minimum number of peaks required per MS2 scan for the scan to be considered.
 ```
 
 ### Python
 
 ```python
-from oliglow import deisotope
+from oliglow import deisotope, averageine
 
 # Example usage with your data
 #TODO
+
+params_dict = {
+    "avgine": averageine.averagine_rna_with_backbone,
+    "min_score": 150.0,
+    "mass_error_tol": 0.02,
+    "truncate_after": 0.8,
+    "scale": "sum",
+    "max_missed_peaks": 0,
+    "error_tol": 2e-5,
+    "scale_method": "sum",
+    "minimum_intensity": 0.0,
+}
+
+df = deisotope.deisotope_all_ms2_scans("/path/to/input.raw",
+    deisotoping_parameters=params_dict,
+    aggregate_masses=None,
+    min_num_peaks_per_ms2_scan=0,
+)
+
+#Export this to a tsv file!
+df.write_csv("/path/to/input.tsv",separator="\t")
 
 ```
 
