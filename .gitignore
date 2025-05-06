@@ -1,8 +1,9 @@
 __pycache__
 .pytest_cache
 poetry.lock
-data/*
+# data/*
 *.DS_Store
 *.code-workspace
 *.ipynb
 *.egg-info
+*.ruff_cache
