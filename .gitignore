@@ -4,6 +4,6 @@ poetry.lock
 # data/*
 *.DS_Store
 *.code-workspace
-*.ipynb
+# *.ipynb
 *.egg-info
 *.ruff_cache
