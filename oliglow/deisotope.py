@@ -1,6 +1,5 @@
 import ms_deisotope as ms_ditp
 import polars as pl
-import importlib
 from oliglow import utils
 from oliglow import averageine
 
@@ -89,6 +88,8 @@ def re_deisotope_get_additional_bunch_info(
         precursor_charge = precursor.extracted_charge
         # precursor_neutral_mass = precursor.extracted_neutral_mass
     else:
+        # TODO type(1) and type(-1) are both int. What is this supposed to do?
+        # maybe you want to check  `precursor.charge is not None` instead?
         if type(precursor.charge) == type(1) or type(precursor.charge) == type(-1):
             precursor_charge = precursor.charge  # Sometimes the precursor charge is not known by the instrument, in that case, set it to 0!
         else:
@@ -208,6 +209,7 @@ def deconvolute_ms2_bunch(
     if "charge_range" in parameters:
         charge_range = parameters["charge_range"]
     else:
+        # TODO anti-pattern, maybe you want to check if .charge is not None here?
         if type(bunch.precursor_information.charge) == type(1):
             charge_range = (
                 bunch.polarity,

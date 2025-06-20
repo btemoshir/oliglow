@@ -1,6 +1,6 @@
 from pathlib import Path
 from typing import Literal
-from oliglow import deisotope, utils, averageine
+from oliglow import deisotope, averageine
 from tap import Tap
 import polars as pl
 from clr_loader import get_mono

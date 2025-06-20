@@ -7,3 +7,6 @@ poetry.lock
 # *.ipynb
 *.egg-info
 *.ruff_cache
+/.pixi
+/.ruff_cache
+/pixi.lock
